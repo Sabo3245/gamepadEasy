@@ -1,0 +1,11 @@
+{
+  "name": "gamepad-easy",
+  "version": "0.1.0",
+  "description": "Easier way of using Gamepad API",
+  "main": "gamepad.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Sabo",
+  "license": "ISC"
+}
