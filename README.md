@@ -20,7 +20,7 @@ structured state object every frame.
 ## 🚀 Basic Usage
 
 ```js
-const pad = new GamepadController(0);
+const pad = new Gamepad(0); // change 0 for multiple controllers 
 
 pad.listen((e) => {
   if (e.buttons.a) {
