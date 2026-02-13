@@ -2,6 +2,7 @@
  * @typedef {Object} GamepadState
  * @property {{ leftStick: { x: number, y: number }, rightStick: { x: number, y: number } }} axes
  * @property {{ a: boolean, b: boolean, x: boolean, y: boolean,lb:boolean,rb:boolean,lt:boolean,rt:boolean,back:boolean,start:boolean,ls:Blob,rs:boolean,dpadUp:boolean,dpadDown:boolean,dpadLeft:boolean,dpadUp:boolean }} buttons
+ * @property {{lt:number , rt:number}} triggers
  */
 
 const gamepads = [];
@@ -31,9 +32,10 @@ export default class Gamepad {
     constructor(index = 0){
         this.index = index;
         this.listeners = []
+        this.onListeners = {}
+        this.prevButtons = {};
 
     }
-
         /**
          * @param {(state: GamepadState) => void} cb
          */
@@ -47,22 +49,62 @@ export default class Gamepad {
         this.loop(gamepad);
     }
 
-    pulse(x,y ){
-        const gamepad = navigator.getGamepads()[this.index];
-        gamepad.vibrationActuator[0].pulse(x,y);
+    on(eventName, callback) {
+        if (!this.onListeners[eventName]) {
+            this.onListeners[eventName] = [];
+        }
+
+        this.onListeners[eventName].push(callback);
+    }
+
+    emit(eventName, data) {
+        const handlers = this.onListeners[eventName];
+        if (!handlers) return;
+
+        handlers.forEach(cb => cb(data));
     }
 
 
      loop(){
         const gamepad = navigator.getGamepads()[this.index];
 
+        if(!gamepad){
+            requestAnimationFrame(this.loop.bind(this))
+            return;
+        }
+
         const state = {
-            buttons: {}
+            buttons: {},
+            triggers : {}
         }
 
         gamepad.buttons.forEach((btn,i)=>{
             state.buttons[BUTTON_MAP[i]] = btn.pressed;
+
+            const name = BUTTON_MAP[i];
+            if (!name) return;
+
+            const wasPressed = this.prevButtons[name] || false;
+            const isPressed = btn.pressed;
+
+            if (isPressed && !wasPressed) {
+            this.emit(`${name}:press`,{
+                button:name,
+                value: btn.value
+            });
+            }
+
+            if (!isPressed && wasPressed) {
+            this.emit(`${name}:release`);
+            }
+
+            this.prevButtons[name] = isPressed;
         })
+
+        state["triggers"] = {
+            lt : gamepad.buttons[6].value,
+            rt: gamepad.buttons[7].value
+        }
 
         state["axes"] = {
             leftStick:{

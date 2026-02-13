@@ -1,6 +1,6 @@
 {
   "name": "gamepad-easy",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Easier way of using Gamepad API",
   "main": "gamepad.js",
   "scripts": {
