@@ -104,7 +104,7 @@ These events fire only when the button state changes (edge-triggered).
 
 ---
 
-## onPress
+## on
 
 Fires once when the button is pressed.
 
@@ -115,8 +115,6 @@ gp.on("a:press", () => {
 ```
 
 ---
-
-## onRelease
 
 Fires once when the button is released.
 
