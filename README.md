@@ -1,4 +1,4 @@
-# Gamepad Listener
+# 🎮 gamepadEasy
 
 A lightweight abstraction over the browser Gamepad API that provides:
 
